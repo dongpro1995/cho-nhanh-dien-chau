@@ -35,15 +35,44 @@
             border-radius: 4px;
             font-size: 14px;
             outline: none;
+            box-sizing: border-box;
         }
         #img-preview {
             width: 100%;
-            height: 120px;
+            height: 140px;
             object-fit: cover;
             border-radius: 4px;
             margin-top: 8px;
             display: none;
             border: 1px solid #ddd;
+        }
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        .btn-upload {
+            border: 2px dashed #ee4d2d;
+            color: #ee4d2d;
+            background-color: #fff5f2;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -53,29 +82,31 @@
         <div class="header-title"><i class="fa-solid fa-store"></i> Quản Lý Gian Hàng</div>
     </div>
 
-    <div class="container">
+    <div class="container" style="padding: 15px;">
         <!-- Thông tin gian hàng -->
         <div class="shop-banner">
             <h2 id="shop-title-name">Gian Hàng Của Bạn</h2>
-            <p style="font-size: 13px;">Chợ Nhanh Diễn Châu - Kết nối mua bán nhanh chóng</p>
+            <p style="font-size: 13px;">Chợ Nhanh Diễn Châu - Đăng ký shop để bắt đầu bán hàng</p>
         </div>
 
         <!-- Nút mở form đăng sản phẩm -->
         <div style="margin-bottom: 15px;">
-            <button class="btn-primary" onclick="openPostModal()"><i class="fa-solid fa-plus"></i> Đăng Sản Phẩm Mới (Tải Ảnh Từ Máy)</button>
+            <button class="btn-primary" onclick="openPostModal()" style="width:100%; padding:12px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; font-size:15px; cursor:pointer;">
+                <i class="fa-solid fa-plus"></i> Đăng Sản Phẩm Mới (Chọn Ảnh Từ Máy)
+            </button>
         </div>
 
         <h3 style="font-size: 15px; margin-bottom: 10px;">Sản phẩm trong gian hàng của bạn</h3>
-        <!-- Danh sách sản phẩm của shop -->
-        <div class="product-grid" id="shop-product-list">
+        <!-- Danh sách sản phẩm của shop hiện tại -->
+        <div class="product-grid" id="shop-product-list" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <!-- Sản phẩm được nạp tự động -->
         </div>
     </div>
 
     <!-- MODAL ĐĂNG SẢN PHẨM & TẢI ẢNH TỪ THIẾT BỊ -->
-    <div class="modal" id="post-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center; padding:20px;">
-        <div class="modal-content" style="background:white; width:100%; max-width:400px; border-radius:8px; padding:20px; position:relative;">
-            <span class="close-btn" onclick="closePostModal()" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer; color:#888;">&times;</span>
+    <div class="modal" id="post-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;">
+        <div class="modal-content" style="background:white; width:100%; max-width:400px; border-radius:10px; padding:20px; position:relative;">
+            <span class="close-btn" onclick="closePostModal()" style="position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; color:#888;">&times;</span>
             <h3 style="color:#ee4d2d; margin-bottom:15px; text-align:center;">Đăng Bán Sản Phẩm Mới</h3>
             
             <div class="form-group">
@@ -89,13 +120,17 @@
             </div>
 
             <div class="form-group">
-                <label>Chọn ảnh sản phẩm từ điện thoại / máy tính</label>
-                <input type="file" id="p-file" class="form-control" accept="image/*" onchange="previewImage(event)">
+                <label>Hình ảnh sản phẩm từ điện thoại</label>
+                <div class="upload-btn-wrapper">
+                    <div class="btn-upload"><i class="fa-solid fa-camera"></i> Bấm vào đây để chọn ảnh</div>
+                    <input type="file" id="p-file" accept="image/*" onchange="previewImage(event)">
+                </div>
+                
                 <!-- Khung hiển thị xem trước ảnh vừa chọn -->
                 <img id="img-preview" src="#" alt="Ảnh xem trước">
             </div>
 
-            <button class="btn-primary" onclick="saveNewProduct()" style="margin-top: 10px;">Đăng Bài Lên Chợ</button>
+            <button class="btn-primary" onclick="saveNewProduct()" style="width:100%; padding:10px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; margin-top:10px; cursor:pointer;">Đăng Bài Lên Chợ Ngay</button>
         </div>
     </div>
 
@@ -109,15 +144,24 @@
     </div>
 
     <script>
-        // Kiểm tra tài khoản đăng nhập hiện tại
+        let base64ImageString = ""; 
         let currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) {
-            alert("Bạn cần đăng nhập tài khoản trước khi quản lý gian hàng!");
-            window.location.href = "account.html";
-        }
-        document.getElementById('shop-title-name').innerText = "Gian hàng: " + currentUser;
 
-        let base64ImageString = ""; // Biến lưu chuỗi ảnh sau khi chuyển đổi
+        // BẮT BUỘC ĐĂNG KÝ / ĐĂNG NHẬP: Nếu khách vãng lai chưa có tài khoản, chuyển hướng sang trang Tài khoản để đăng ký shop
+        if (!currentUser) {
+            alert("Bạn cần đăng ký hoặc đăng nhập tài khoản shop trước khi truy cập gian hàng!");
+            window.location.href = "account.html";
+        } else {
+            document.getElementById('shop-title-name').innerText = "Gian hàng của: " + currentUser;
+        }
+
+        function initPage() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartBadge = document.getElementById('cart-count');
+            if(cartBadge) cartBadge.innerText = cart.length;
+
+            loadShopProducts();
+        }
 
         function openPostModal() {
             document.getElementById('post-modal').style.display = 'flex';
@@ -127,34 +171,33 @@
             document.getElementById('post-modal').style.display = 'none';
         }
 
-        // Xử lý đọc file ảnh từ điện thoại và hiển thị xem trước
+        // Đọc ảnh từ thiết bị
         function previewImage(event) {
             let file = event.target.files[0];
             if (file) {
                 let reader = new FileReader();
                 reader.onload = function(e) {
-                    base64ImageString = e.target.result; // Lưu mã ảnh Base64
+                    base64ImageString = e.target.result;
                     let preview = document.getElementById('img-preview');
                     preview.src = base64ImageString;
                     preview.style.display = 'block';
-                }
+                };
                 reader.readAsDataURL(file);
             }
         }
 
-        // Lưu sản phẩm vào LocalStorage để cả trang Chủ (index.html) và Gian Hàng đều hiển thị được
+        // Lưu sản phẩm vào tài khoản shop đang đăng nhập
         function saveNewProduct() {
             let name = document.getElementById('p-name').value.trim();
             let price = document.getElementById('p-price').value.trim();
 
             if (!name || !price || !base64ImageString) {
-                alert("Vui lòng điền đầy đủ tên, giá và chọn ảnh sản phẩm từ thiết bị!");
+                alert("Vui lòng nhập tên, giá và chọn hình ảnh sản phẩm từ thiết bị!");
                 return;
             }
 
             let products = JSON.parse(localStorage.getItem('products')) || [];
             
-            // Thêm sản phẩm mới vào danh sách chung
             products.unshift({
                 name: name,
                 price: parseInt(price),
@@ -165,31 +208,37 @@
             localStorage.setItem('products', JSON.stringify(products));
 
             alert("Đăng sản phẩm thành công!");
+            
+            document.getElementById('p-name').value = "";
+            document.getElementById('p-price').value = "";
+            document.getElementById('p-file').value = "";
+            document.getElementById('img-preview').style.display = 'none';
+            base64ImageString = "";
+
             closePostModal();
             loadShopProducts();
         }
 
-        // Tải danh sách sản phẩm của riêng shop này
+        // Hiển thị sản phẩm thuộc về shop hiện tại
         function loadShopProducts() {
             let products = JSON.parse(localStorage.getItem('products')) || [];
             let container = document.getElementById('shop-product-list');
             
-            // Chỉ lọc các sản phẩm do chính tài khoản hiện tại đăng
             let myProducts = products.filter(p => p.shop === currentUser);
 
             if (myProducts.length === 0) {
-                container.innerHTML = "<p style='grid-column: span 2; text-align:center; color:#888;'>Gian hàng của bạn chưa có sản phẩm nào.</p>";
+                container.innerHTML = "<p style='grid-column: span 2; text-align:center; color:#888; padding:20px;'>Gian hàng của bạn chưa có sản phẩm nào.</p>";
                 return;
             }
 
             let html = "";
             myProducts.forEach(p => {
                 html += `
-                    <div class="product-card" style="background:white; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
-                        <img src="${p.img}" style="width:100%; height:130px; object-fit:cover;" alt="product">
-                        <div style="padding:10px;">
-                            <div style="font-size:13px; height:34px; overflow:hidden; margin-bottom:6px;">${p.name}</div>
-                            <div style="color:#ee4d2d; font-weight:bold; font-size:14px;">${Number(p.price).toLocaleString()} đ</div>
+                    <div class="product-card" style="background:white; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+                        <img src="${p.img}" style="width:100%; height:120px; object-fit:cover;" alt="product">
+                        <div style="padding:8px;">
+                            <div style="font-size:12px; height:32px; overflow:hidden; margin-bottom:4px; font-weight:500;">${p.name}</div>
+                            <div style="color:#ee4d2d; font-weight:bold; font-size:13px;">${Number(p.price).toLocaleString()} đ</div>
                         </div>
                     </div>
                 `;
@@ -197,9 +246,7 @@
             container.innerHTML = html;
         }
 
-        // Cập nhật số lượng giỏ hàng trên thanh menu
-        document.getElementById('cart-count').innerText = (JSON.parse(localStorage.getItem('cart')) || []).length;
-        loadShopProducts();
+        window.onload = initPage;
     </script>
 </body>
 </html>

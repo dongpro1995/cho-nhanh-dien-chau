@@ -3,24 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tài Khoản Cộng Đồng - Chợ Nhanh Diễn Châu</title>
+    <title>Tài Khoản - Chợ Nhanh Diễn Châu</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Nhúng thư viện Firebase v8 -->
+    <!-- Thư viện Firebase v8 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        .auth-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        body { background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding-bottom: 60px; }
+        
+        /* 1. KHUNG ĐĂNG NHẬP / ĐĂNG KÝ (Ẩn đi khi đã đăng nhập) */
+        .auth-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin: 15px; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; font-weight: bold; }
         .form-control { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; box-sizing: border-box; }
         .action-links { display: flex; justify-content: space-between; margin-top: 15px; font-size: 13px; }
         .link-btn { color: #2980b9; cursor: pointer; text-decoration: underline; }
         .link-btn.forgot { color: #e67e22; }
-        .profile-box { text-align: center; background: white; padding: 25px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .profile-avatar { width: 70px; height: 70px; background: #ee4d2d; color: white; font-size: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto 12px auto; font-weight: bold; }
+
+        /* 2. GIAO DIỆN TRANG CÁ NHÂN GIỐNG SÀN TMĐT */
+        .profile-top-banner {
+            background: linear-gradient(135deg, #ee4d2d, #ff7337);
+            color: white;
+            padding: 20px 15px;
+            position: relative;
+        }
+        .user-info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .user-avatar-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            background: #fff;
+            color: #ee4d2d;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .voucher-bar {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Khung Quản Lý Đơn Hàng */
+        .section-box {
+            background: white;
+            margin: 10px 15px;
+            border-radius: 8px;
+            padding: 12px 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+        .section-header a {
+            color: #888;
+            font-weight: normal;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        .order-icons {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+        .order-icon-item {
+            font-size: 11px;
+            color: #555;
+            cursor: pointer;
+            flex: 1;
+        }
+        .order-icon-item i {
+            font-size: 20px;
+            color: #ee4d2d;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* Bảng Thông Tin Chi Tiết & Chỉnh Sửa */
+        .info-detail-box {
+            font-size: 13px;
+            color: #444;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-title { color: #666; font-weight: 500; }
+        .info-val { font-weight: bold; color: #222; text-align: right; }
+        .edit-input { width: 60%; padding: 4px 8px; font-size: 12px; border: 1px solid #ee4d2d; border-radius: 4px; outline: none; }
     </style>
 </head>
 <body>
@@ -29,105 +139,171 @@
         <div class="header-title"><i class="fa-solid fa-user"></i> Tài Khoản Cá Nhân</div>
     </div>
 
-    <div class="container" style="padding: 15px;">
+    <!-- 1. FORM ĐĂNG NHẬP (Chỉ hiện khi chưa đăng nhập) -->
+    <div class="auth-card" id="login-section">
+        <h3 style="color: #ee4d2d; margin-bottom: 12px;">Đăng Nhập Hệ Thống</h3>
+        <div class="form-group">
+            <label>Tên đăng nhập</label>
+            <input type="text" id="login-user" class="form-control" placeholder="Nhập tên tài khoản...">
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu</label>
+            <input type="password" id="login-pass" class="form-control" placeholder="Nhập mật khẩu...">
+        </div>
+        <button class="btn-primary" onclick="handleLogin()" style="width:100%; padding:10px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Đăng Nhập</button>
         
-        <!-- 1. FORM ĐĂNG NHẬP -->
-        <div class="auth-card" id="login-section">
-            <h3 style="color: #ee4d2d; margin-bottom: 12px;">Đăng Nhập Toàn Hệ Thống</h3>
+        <div class="action-links">
+            <span class="link-btn" onclick="showSection('register-section')">👉 Đăng ký tài khoản mới</span>
+            <span class="link-btn forgot" onclick="showSection('forgot-section')">Quên mật khẩu?</span>
+        </div>
+    </div>
+
+    <!-- 2. FORM ĐĂNG KÝ -->
+    <div class="auth-card" id="register-section" style="display: none;">
+        <h3 style="color: #ee4d2d; margin-bottom: 12px;">Đăng Ký Tài Khoản Mới</h3>
+        <div class="form-group">
+            <label>Tên đăng nhập (Username) *</label>
+            <input type="text" id="reg-user" class="form-control" placeholder="Dùng để đăng nhập mọi thiết bị...">
+        </div>
+        <div class="form-group">
+            <label>Biệt hiệu / Nickname *</label>
+            <input type="text" id="reg-nickname" class="form-control" placeholder="Ví dụ: Shop Cường Diễn Châu...">
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại / Email *</label>
+            <input type="text" id="reg-contact" class="form-control" placeholder="Dùng để liên hệ / khôi phục mật khẩu...">
+        </div>
+        <div class="form-group">
+            <label>Địa chỉ nhận hàng *</label>
+            <input type="text" id="reg-address" class="form-control" placeholder="Khối/Xóm, Xã, Diễn Châu...">
+        </div>
+        <div class="form-group">
+            <label>Số tài khoản ngân hàng</label>
+            <input type="text" id="reg-bank" class="form-control" placeholder="Ngân hàng & STK...">
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu *</label>
+            <input type="password" id="reg-pass" class="form-control" placeholder="Tạo mật khẩu...">
+        </div>
+        <button class="btn-primary" onclick="handleRegister()" style="width:100%; padding:10px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Đăng Ký Tài Khoản</button>
+        
+        <div class="action-links" style="justify-content: center;">
+            <span class="link-btn" onclick="showSection('login-section')">⬅ Quay lại Đăng Nhập</span>
+        </div>
+    </div>
+
+    <!-- 3. FORM QUÊN MẬT KHẨU -->
+    <div class="auth-card" id="forgot-section" style="display: none;">
+        <h3 style="color: #e67e22; margin-bottom: 5px;">Khôi Phục Mật Khẩu</h3>
+        <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Nhập SĐT hoặc Email bạn đã dùng khi đăng ký.</p>
+        
+        <div id="step-send-otp">
             <div class="form-group">
-                <label>Tên đăng nhập</label>
-                <input type="text" id="login-user" class="form-control" placeholder="Nhập tên tài khoản...">
+                <label>SĐT hoặc Email đã đăng ký</label>
+                <input type="text" id="forgot-contact" class="form-control" placeholder="Nhập SĐT hoặc Email...">
+            </div>
+            <button class="btn-primary" style="width:100%; padding:10px; background:#e67e22; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="verifyContactAndSendOtp()">Gửi Mã OTP</button>
+        </div>
+
+        <div id="step-verify-otp" style="display: none;">
+            <div class="form-group">
+                <label>Mã xác thực (Mã OTP: <b style="color: red;">1234</b>)</label>
+                <input type="text" id="otp-input" class="form-control" placeholder="Nhập 4 chữ số OTP...">
             </div>
             <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" id="login-pass" class="form-control" placeholder="Nhập mật khẩu...">
+                <label>Mật khẩu mới</label>
+                <input type="password" id="new-pass" class="form-control" placeholder="Nhập mật khẩu mới...">
             </div>
-            <button class="btn-primary" onclick="handleLogin()" style="width:100%; padding:10px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Đăng Nhập</button>
-            
-            <div class="action-links">
-                <span class="link-btn" onclick="showSection('register-section')">👉 Đăng ký tài khoản mới</span>
-                <span class="link-btn forgot" onclick="showSection('forgot-section')">Quên mật khẩu?</span>
+            <button class="btn-primary" style="width:100%; padding:10px; background:#e67e22; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="submitNewPassword()">Xác Nhận Đổi Mật Khẩu</button>
+        </div>
+
+        <div class="action-links" style="justify-content: center; margin-top: 15px;">
+            <span class="link-btn" onclick="showSection('login-section')">⬅ Quay lại Đăng Nhập</span>
+        </div>
+    </div>
+
+    <!-- 4. GIAO DIỆN TRANG CÁ NHÂN CHÍNH THỨC (Khi đã đăng nhập) -->
+    <div id="profile-section" style="display: none;">
+        
+        <!-- Header Banner thông tin tài khoản -->
+        <div class="profile-top-banner">
+            <div class="user-info-row">
+                <div class="user-avatar-name">
+                    <div class="profile-avatar" id="avatar-text">U</div>
+                    <div>
+                        <h3 id="profile-nickname" style="margin: 0; font-size: 16px;">Nickname</h3>
+                        <p style="margin: 3px 0 0 0; font-size: 11px; opacity: 0.9;" id="profile-username">@username</p>
+                    </div>
+                </div>
+                <button class="settings-btn" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+            </div>
+            <div class="voucher-bar">
+                <i class="fa-solid fa-ticket"></i> <span>4 voucher kho hàng | Sẵn sàng mua sắm</span>
             </div>
         </div>
 
-        <!-- 2. FORM ĐĂNG KÝ CỘNG ĐỒNG -->
-        <div class="auth-card" id="register-section" style="display: none;">
-            <h3 style="color: #ee4d2d; margin-bottom: 12px;">Đăng Ký Tài Khoản Mới</h3>
-            <div class="form-group">
-                <label>Tên đăng nhập (Username) *</label>
-                <input type="text" id="reg-user" class="form-control" placeholder="Dùng để đăng nhập mọi thiết bị...">
+        <!-- Quản lý đơn hàng -->
+        <div class="section-box">
+            <div class="section-header">
+                <span>Đơn Hàng Của Tôi</span>
+                <a href="#">Xem tất cả đơn hàng <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i></a>
             </div>
-            <div class="form-group">
-                <label>Biệt hiệu / Nickname *</label>
-                <input type="text" id="reg-nickname" class="form-control" placeholder="Ví dụ: Shop Cường Diễn Châu...">
-            </div>
-            <div class="form-group">
-                <label>Số điện thoại hoặc Email liên hệ *</label>
-                <input type="text" id="reg-contact" class="form-control" placeholder="Dùng để khôi phục khi quên mật khẩu...">
-            </div>
-            <div class="form-group">
-                <label>Địa chỉ Shop *</label>
-                <input type="text" id="reg-address" class="form-control" placeholder="Nhập địa chỉ...">
-            </div>
-            <div class="form-group">
-                <label>Mật khẩu *</label>
-                <input type="password" id="reg-pass" class="form-control" placeholder="Tạo mật khẩu...">
-            </div>
-            <button class="btn-primary" onclick="handleRegister()" style="width:100%; padding:10px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Đăng Ký Lưu Lên Mạng</button>
-            
-            <div class="action-links" style="justify-content: center;">
-                <span class="link-btn" onclick="showSection('login-section')">⬅ Quay lại Đăng Nhập</span>
+            <div class="order-icons">
+                <div class="order-icon-item"><i class="fa-solid fa-wallet"></i><span>Chờ thanh toán</span></div>
+                <div class="order-icon-item"><i class="fa-solid fa-box"></i><span>Chờ vận chuyển</span></div>
+                <div class="order-icon-item"><i class="fa-solid fa-truck-fast"></i><span>Chờ giao hàng</span></div>
+                <div class="order-icon-item"><i class="fa-solid fa-comments"></i><span>Đánh giá</span></div>
             </div>
         </div>
 
-        <!-- 3. FORM QUÊN MẬT KHẨU -->
-        <div class="auth-card" id="forgot-section" style="display: none;">
-            <h3 style="color: #e67e22; margin-bottom: 5px;">Khôi Phục Mật Khẩu</h3>
-            <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Nhập Số điện thoại hoặc Email bạn đã dùng khi đăng ký tài khoản.</p>
-            
-            <div id="step-send-otp">
-                <div class="form-group">
-                    <label>SĐT hoặc Email đã đăng ký</label>
-                    <input type="text" id="forgot-contact" class="form-control" placeholder="Nhập SĐT hoặc Email...">
-                </div>
-                <button class="btn-primary" style="width:100%; padding:10px; background:#e67e22; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="verifyContactAndSendOtp()">Gửi Mã Xác Thực (OTP)</button>
+        <!-- Kênh của tôi (Đến trang quản lý gian hàng) -->
+        <div class="section-box">
+            <div class="section-header">
+                <span>Kênh Người Bán / Quản Lý Shop</span>
+                <a href="shop.html">Truy cập <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i></a>
             </div>
-
-            <div id="step-verify-otp" style="display: none;">
-                <div class="form-group">
-                    <label>Mã xác thực (Mã OTP giả lập hệ thống: <b style="color: red;">1234</b>)</label>
-                    <input type="text" id="otp-input" class="form-control" placeholder="Nhập 4 chữ số OTP...">
-                </div>
-                <div class="form-group">
-                    <label>Mật khẩu mới</label>
-                    <input type="password" id="new-pass" class="form-control" placeholder="Nhập mật khẩu mới...">
-                </div>
-                <button class="btn-primary" style="width:100%; padding:10px; background:#e67e22; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="submitNewPassword()">Xác Nhận Đổi Mật Khẩu</button>
-            </div>
-
-            <div class="action-links" style="justify-content: center; margin-top: 15px;">
-                <span class="link-btn" onclick="showSection('login-section')">⬅ Quay lại Đăng Nhập</span>
-            </div>
+            <a href="shop.html" style="display: flex; align-items: center; justify-content: space-between; background: #fff5f2; color: #ee4d2d; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #ffd8cc;">
+                <span><i class="fa-solid fa-store" style="margin-right: 8px;"></i> Quản lý gian hàng & Đăng bán sản phẩm</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
         </div>
 
-        <!-- 4. TRANG CÁ NHÂN (HIỆN RIÊNG BIỆT KHI ĐÃ ĐĂNG NHẬP - ẨN HẲN FORM ĐĂNG NHẬP) -->
-        <div class="profile-box" id="profile-section" style="display: none;">
-            <div class="profile-avatar" id="avatar-text">U</div>
-            <h3 id="profile-nickname" style="color: #ee4d2d; margin-bottom: 4px;">Nickname</h3>
-            <p style="font-size: 13px; color: #666; margin-bottom: 15px;" id="profile-username">@username</p>
-            
-            <div style="margin-bottom: 15px;">
-                <a href="shop.html" style="display: block; background: #fff5f2; color: #ee4d2d; border: 1px solid #ee4d2d; padding: 12px; border-radius: 6px; font-weight: bold; text-decoration: none; margin-bottom: 8px;">
-                    <i class="fa-solid fa-store"></i> Đến Gian Hàng Của Tôi
-                </a>
+        <!-- Thông tin chi tiết & Cập nhật -->
+        <div class="section-box">
+            <div class="section-header">
+                <span>Thông Tin Tài Khoản & Thanh Toán</span>
             </div>
-            
-            <button class="btn-primary" style="width:100%; padding:10px; background:#7f8c8d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="handleLogout()">Đăng Xuất Tài Khoản</button>
+            <div class="info-detail-box">
+                <div class="info-row">
+                    <span class="info-title"><i class="fa-solid fa-phone"></i> SĐT / Email:</span>
+                    <span class="info-val" id="profile-contact-display">--</span>
+                    <input type="text" id="edit-contact-input" class="edit-input" style="display:none;">
+                </div>
+                <div class="info-row">
+                    <span class="info-title"><i class="fa-solid fa-location-dot"></i> Địa chỉ nhận hàng:</span>
+                    <span class="info-val" id="profile-address-display">--</span>
+                    <input type="text" id="edit-address-input" class="edit-input" style="display:none;">
+                </div>
+                <div class="info-row">
+                    <span class="info-title"><i class="fa-solid fa-credit-card"></i> Ngân hàng & STK:</span>
+                    <span class="info-val" id="profile-bank-display">--</span>
+                    <input type="text" id="edit-bank-input" class="edit-input" style="display:none;">
+                </div>
+            </div>
+
+            <div style="margin-top: 12px;">
+                <button id="btn-edit-info" onclick="toggleEditInfo()" style="width:100%; padding:8px; background:#27ae60; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px;">
+                    <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa thông tin / Đổi SĐT
+                </button>
+                <button id="btn-save-info" onclick="saveUpdatedInfo()" style="width:100%; padding:8px; background:#e67e22; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px; display:none;">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi lên mạng
+                </button>
+            </div>
         </div>
 
     </div>
 
-    <!-- Thanh điều hướng -->
+    <!-- Thanh điều hướng dưới cùng -->
     <div class="bottom-nav">
         <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
         <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
@@ -137,6 +313,7 @@
     </div>
 
     <script>
+        // Cấu hình Firebase Realtime Database
         const firebaseConfig = {
             apiKey: "AIzaSyDV386aZviFh1EZkDyZfnbfBuAwTAa_HqI",
             authDomain: "chonhanhdienchau.firebaseapp.com",
@@ -151,9 +328,9 @@
         const db = firebase.database();
 
         let targetResetUser = null;
+        let isEditing = false;
 
         function showSection(id) {
-            // Ẩn tất cả các khung
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('register-section').style.display = 'none';
             document.getElementById('forgot-section').style.display = 'none';
@@ -162,28 +339,92 @@
             document.getElementById('step-send-otp').style.display = 'block';
             document.getElementById('step-verify-otp').style.display = 'none';
 
-            // Chỉ hiển thị khung được chỉ định
             document.getElementById(id).style.display = 'block';
         }
 
+        // Kiểm tra trạng thái đăng nhập
         function checkLoginState() {
             let currentUser = localStorage.getItem('currentUser');
             if (currentUser) {
-                // ĐÃ ĐĂNG NHẬP: Ẩn hẳn các form đăng nhập, chỉ hiện thị trang cá nhân
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('register-section').style.display = 'none';
                 document.getElementById('forgot-section').style.display = 'none';
                 document.getElementById('profile-section').style.display = 'block';
 
-                let userData = JSON.parse(localStorage.getItem('user_info')) || {};
-                let nick = userData.nickname || currentUser;
-                document.getElementById('profile-nickname').innerText = nick;
-                document.getElementById('profile-username').innerText = "Tài khoản: " + currentUser;
-                document.getElementById('avatar-text').innerText = nick.charAt(0).toUpperCase();
+                db.ref('users/' + currentUser).once('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        let data = snapshot.val();
+                        let nick = data.nickname || currentUser;
+                        document.getElementById('profile-nickname').innerText = nick;
+                        document.getElementById('profile-username').innerText = "@" + currentUser;
+                        document.getElementById('profile-contact-display').innerText = data.contact || "Chưa có";
+                        document.getElementById('profile-address-display').innerText = data.address || "Chưa có";
+                        document.getElementById('profile-bank-display').innerText = data.bank || "Chưa có";
+                        document.getElementById('avatar-text').innerText = nick.charAt(0).toUpperCase();
+
+                        document.getElementById('edit-contact-input').value = data.contact || "";
+                        document.getElementById('edit-address-input').value = data.address || "";
+                        document.getElementById('edit-bank-input').value = data.bank || "";
+                    }
+                });
             } else {
-                // CHƯA ĐĂNG NHẬP: Hiển thị form đăng nhập mặc định
                 showSection('login-section');
             }
+        }
+
+        function toggleEditInfo() {
+            isEditing = !isEditing;
+            if (isEditing) {
+                document.getElementById('profile-contact-display').style.display = 'none';
+                document.getElementById('edit-contact-input').style.display = 'inline-block';
+
+                document.getElementById('profile-address-display').style.display = 'none';
+                document.getElementById('edit-address-input').style.display = 'inline-block';
+
+                document.getElementById('profile-bank-display').style.display = 'none';
+                document.getElementById('edit-bank-input').style.display = 'inline-block';
+
+                document.getElementById('btn-edit-info').style.display = 'none';
+                document.getElementById('btn-save-info').style.display = 'block';
+            } else {
+                document.getElementById('profile-contact-display').style.display = 'inline-block';
+                document.getElementById('edit-contact-input').style.display = 'none';
+
+                document.getElementById('profile-address-display').style.display = 'inline-block';
+                document.getElementById('edit-address-input').style.display = 'none';
+
+                document.getElementById('profile-bank-display').style.display = 'inline-block';
+                document.getElementById('edit-bank-input').style.display = 'none';
+
+                document.getElementById('btn-edit-info').style.display = 'block';
+                document.getElementById('btn-save-info').style.display = 'none';
+            }
+        }
+
+        function saveUpdatedInfo() {
+            let currentUser = localStorage.getItem('currentUser');
+            let newContact = document.getElementById('edit-contact-input').value.trim();
+            let newAddress = document.getElementById('edit-address-input').value.trim();
+            let newBank = document.getElementById('edit-bank-input').value.trim();
+
+            if (!newContact) {
+                alert("Vui lòng nhập SĐT hoặc Email!");
+                return;
+            }
+
+            db.ref('users/' + currentUser).update({
+                contact: newContact,
+                address: newAddress,
+                bank: newBank
+            }, (error) => {
+                if (!error) {
+                    alert("Cập nhật thông tin thành công!");
+                    toggleEditInfo();
+                    checkLoginState();
+                } else {
+                    alert("Lỗi: " + error.message);
+                }
+            });
         }
 
         function handleRegister() {
@@ -191,10 +432,11 @@
             let nickname = document.getElementById('reg-nickname').value.trim();
             let contact = document.getElementById('reg-contact').value.trim();
             let address = document.getElementById('reg-address').value.trim();
+            let bank = document.getElementById('reg-bank').value.trim();
             let pass = document.getElementById('reg-pass').value.trim();
 
             if (!user || !nickname || !contact || !pass) {
-                alert("Vui lòng điền đầy đủ các thông tin bắt buộc!");
+                alert("Vui lòng điền đủ thông tin bắt buộc!");
                 return;
             }
 
@@ -206,13 +448,14 @@
                         pass: pass,
                         nickname: nickname,
                         contact: contact,
-                        address: address
+                        address: address,
+                        bank: bank
                     }, (error) => {
                         if (!error) {
-                            alert("Đăng ký thành công! Bạn có thể dùng tài khoản này đăng nhập trên mọi máy.");
+                            alert("Đăng ký thành công! Hãy đăng nhập.");
                             showSection('login-section');
                         } else {
-                            alert("Lỗi kết nối: " + error.message);
+                            alert("Lỗi: " + error.message);
                         }
                     });
                 }
@@ -224,7 +467,7 @@
             let pass = document.getElementById('login-pass').value.trim();
 
             if (!user || !pass) {
-                alert("Vui lòng nhập tên tài khoản và mật khẩu!");
+                alert("Vui lòng nhập tài khoản và mật khẩu!");
                 return;
             }
 
@@ -233,14 +476,13 @@
                     let data = snapshot.val();
                     if (data.pass === pass) {
                         localStorage.setItem('currentUser', user);
-                        localStorage.setItem('user_info', JSON.stringify(data));
                         alert("Đăng nhập thành công!");
                         checkLoginState();
                     } else {
                         alert("Sai mật khẩu!");
                     }
                 } else {
-                    alert("Tài khoản không tồn tại trên hệ thống!");
+                    alert("Tài khoản không tồn tại!");
                 }
             });
         }
@@ -248,7 +490,7 @@
         function verifyContactAndSendOtp() {
             let contactInput = document.getElementById('forgot-contact').value.trim();
             if (!contactInput) {
-                alert("Vui lòng nhập Số điện thoại hoặc Email của bạn!");
+                alert("Vui lòng nhập SĐT hoặc Email!");
                 return;
             }
 
@@ -263,11 +505,11 @@
 
                 if (foundUser) {
                     targetResetUser = foundUser;
-                    alert("Đã tìm thấy tài khoản! Mã OTP giả lập của bạn là: 1234");
+                    alert("Đã tìm thấy tài khoản! Mã OTP giả lập là: 1234");
                     document.getElementById('step-send-otp').style.display = 'none';
                     document.getElementById('step-verify-otp').style.display = 'block';
                 } else {
-                    alert("Không tìm thấy tài khoản nào đăng ký với thông tin này!");
+                    alert("Không tìm thấy thông tin phù hợp!");
                 }
             });
         }
@@ -290,17 +532,16 @@
                 pass: newPass
             }, (error) => {
                 if (!error) {
-                    alert("Đổi mật khẩu thành công! Hãy đăng nhập lại.");
+                    alert("Đổi mật khẩu thành công!");
                     showSection('login-section');
                 } else {
-                    alert("Lỗi cập nhật: " + error.message);
+                    alert("Lỗi: " + error.message);
                 }
             });
         }
 
         function handleLogout() {
             localStorage.removeItem('currentUser');
-            localStorage.removeItem('user_info');
             alert("Đã đăng xuất!");
             checkLoginState();
         }

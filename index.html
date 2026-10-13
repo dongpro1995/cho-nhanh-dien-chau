@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chợ Nhanh Diễn Châu - Trang Chủ</title>
+    <!-- Liên kết đến file CSS chung của bạn -->
     <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome cho Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .banner-search {
@@ -34,7 +36,7 @@
         .categories {
             display: flex;
             gap: 8px;
-            padding: 15px;
+            padding: 12px 15px;
             overflow-x: auto;
             background: white;
             margin-bottom: 10px;
@@ -115,7 +117,7 @@
 </head>
 <body>
 
-    <!-- Header & Tìm kiếm -->
+    <!-- Header & Ô tìm kiếm -->
     <div class="banner-search">
         <div class="header-title" style="color:white; font-size:18px; font-weight:bold; text-align:center; margin-bottom:8px;">
             <i class="fa-solid fa-cart-shopping"></i> Chợ Nhanh Diễn Châu
@@ -126,7 +128,7 @@
         </div>
     </div>
 
-    <!-- Danh mục nhanh -->
+    <!-- Danh mục sản phẩm -->
     <div class="categories">
         <div class="cat-item">🔥 Tất cả</div>
         <div class="cat-item">📱 Điện tử</div>
@@ -135,16 +137,16 @@
         <div class="cat-item">🍲 Đặc sản</div>
     </div>
 
-    <div class="container" style="padding: 0 15px 10px 15px;">
-        <h3 style="font-size: 15px; margin-bottom: 10px;">⚡ Sản Phẩm Nổi Bật</h3>
+    <div class="container" style="padding: 0 15px 8px 15px;">
+        <h3 style="font-size: 15px;">⚡ Sản Phẩm Nổi Bật</h3>
     </div>
 
-    <!-- Danh sách sản phẩm (Hiển thị chung từ LocalStorage và mẫu) -->
+    <!-- Lưới hiển thị sản phẩm -->
     <div class="product-grid" id="home-product-list">
-        <!-- Sản phẩm sẽ được nạp tự động ở đây -->
+        <!-- Sản phẩm được nạp tự động bằng JavaScript -->
     </div>
 
-    <!-- Thanh điều hướng dưới cùng -->
+    <!-- Thanh điều hướng cố định dưới cùng (Liên kết chính xác đến các file) -->
     <div class="bottom-nav">
         <a href="index.html" class="nav-item active"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
         <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
@@ -154,7 +156,7 @@
     </div>
 
     <script>
-        // Danh sách sản phẩm mẫu mặc định ban đầu
+        // Danh sách sản phẩm mẫu mặc định
         const defaultProducts = [
             { name: "Áo thun nam cổ tròn cotton thoáng mát", price: 120000, img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300", shop: "Shop Thời Trang 37" },
             { name: "Giày sneaker thể thao nam nữ năng động", price: 350000, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300", shop: "Giày Dép Diễn Châu" },
@@ -162,7 +164,7 @@
             { name: "Bình giữ nhiệt inox 304 cao cấp 500ml", price: 85000, img: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=300", shop: "Gia Dụng Thông Minh" }
         ];
 
-        // Load sản phẩm ra giao diện
+        // Hiển thị danh sách sản phẩm ra màn hình
         function loadHomeProducts(productsToDisplay) {
             let container = document.getElementById('home-product-list');
             if (productsToDisplay.length === 0) {
@@ -171,7 +173,7 @@
             }
 
             let html = "";
-            productsToDisplay.forEach((p, index) => {
+            productsToDisplay.forEach((p) => {
                 html += `
                     <div class="product-card">
                         <img class="product-img" src="${p.img}" alt="${p.name}">
@@ -187,13 +189,13 @@
             container.innerHTML = html;
         }
 
-        // Lấy tất cả sản phẩm (Mẫu + Sản phẩm do các shop đăng qua shop.html)
+        // Lấy tổng hợp sản phẩm (Từ LocalStorage khi shop đăng + sản phẩm mẫu)
         function getAllProducts() {
             let customProducts = JSON.parse(localStorage.getItem('products')) || [];
             return [...customProducts, ...defaultProducts];
         }
 
-        // Thêm vào giỏ hàng
+        // Thêm sản phẩm vào giỏ hàng lưu vào LocalStorage
         function addToCart(name, price) {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             cart.push({ name, price, quantity: 1 });
@@ -202,13 +204,13 @@
             alert("Đã thêm sản phẩm vào giỏ hàng!");
         }
 
-        // Cập nhật số lượng hiển thị trên icon Giỏ hàng
+        // Cập nhật số lượng trên icon giỏ hàng ở thanh menu dưới
         function updateCartBadge() {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             document.getElementById('cart-count').innerText = cart.length;
         }
 
-        // Tính năng tìm kiếm sản phẩm ngay lập tức
+        // Tìm kiếm sản phẩm trực tiếp khi gõ phím
         function searchProducts() {
             let keyword = document.getElementById('search-input').value.toLowerCase();
             let allProducts = getAllProducts();
@@ -216,7 +218,7 @@
             loadHomeProducts(filtered);
         }
 
-        // Khởi chạy khi mở trang
+        // Khởi chạy khi tải trang
         updateCartBadge();
         loadHomeProducts(getAllProducts());
     </script>

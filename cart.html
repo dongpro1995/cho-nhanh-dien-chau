@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-title"><i class="fa-solid fa-cart-shopping"></i> Giỏ Hàng Của Bạn</div>
+    </div>
+
+    <div class="container" id="cart-items-container">
+        <!-- Danh sách sản phẩm trong giỏ sẽ hiển thị ở đây -->
+    </div>
+
+    <div class="container">
+        <button class="btn-primary" onclick="goToCheckout()">Tiến Hành Thanh Toán</button>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+        <a href="cart.html" class="nav-item active"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
+        <a href="checkout.html" class="nav-item"><i class="fa-solid fa-box-archive"></i><span>Thanh Toán</span></a>
+        <a href="account.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Tôi</span></a>
+    </div>
+
+    <script>
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let container = document.getElementById('cart-items-container');
+            document.getElementById('cart-count').innerText = cart.length;
+
+            if(cart.length === 0) {
+                container.innerHTML = "<p>Giỏ hàng của bạn đang trống.</p>";
+                return;
+            }
+
+            let html = "";
+            cart.forEach((item, index) => {
+                html += `<div class="card">
+                    <h4>${item.name}</h4>
+                    <p style="color: #ee4d2d;">${item.price.toLocaleString()} đ</p>
+                    <button onclick="removeItem(${index})" style="background:none; border:none; color:red; cursor:pointer; margin-top:5px;">Xóa</button>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function removeItem(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        function goToCheckout() {
+            window.location.href = "checkout.html";
+        }
+
+        loadCart();
+    </script>
+</body>
+</html>

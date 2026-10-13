@@ -6,6 +6,43 @@
     <title>Thanh Toán Đơn Hàng</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .payment-method {
+            margin-top: 10px;
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            background: #fafafa;
+        }
+        .payment-option input {
+            cursor: pointer;
+        }
+        .payment-details {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff5f2;
+            border: 1px dashed #ee4d2d;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .qr-code-img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            border: 1px solid #ddd;
+            margin-top: 8px;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,12 +51,50 @@
     </div>
 
     <div class="container">
+        <!-- Thông tin giao hàng -->
         <div class="card">
-            <h3>Thông tin nhận hàng</h3>
+            <h3>1. Thông tin nhận hàng</h3>
             <input type="text" id="fullname" placeholder="Họ và tên người nhận" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
             <input type="text" id="phone" placeholder="Số điện thoại" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
             <textarea id="address" placeholder="Địa chỉ nhận hàng chi tiết" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;"></textarea>
         </div>
+
+        <!-- Phương thức thanh toán -->
+        <div class="card">
+            <h3>2. Phương thức thanh toán</h3>
+            <div class="payment-method">
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="cod" checked onclick="togglePayment('cod')">
+                    <i class="fa-solid fa-money-bill-wave" style="color: #27ae60;"></i> Thanh toán khi nhận hàng (COD)
+                </label>
+
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="qr" onclick="togglePayment('qr')">
+                    <i class="fa-solid fa-qrcode" style="color: #2980b9;"></i> Chuyển khoản qua Mã QR (VietQR)
+                </label>
+                <!-- Khu vực hiển thị mã QR -->
+                <div class="payment-details" id="qr-box">
+                    <p style="font-size: 13px; font-weight: bold; color: #333;">Quét mã QR để thanh toán nhanh</p>
+                    <!-- Ảnh QR mẫu từ API VietQR công khai -->
+                    <img class="qr-code-img" src="https://img.vietqr.io/image/VCB-0123456789-compact2.png?amount=150000&addInfo=ThanhToanChoNhanh&accountName=CHO%20NHANH%20DIEN%20CHAU" alt="Mã QR thanh toán">
+                    <p style="font-size: 12px; color: #666; margin-top: 5px;">Nội dung CK: <b>ThanhToanChoNhanh</b></p>
+                </div>
+
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="card" onclick="togglePayment('card')">
+                    <i class="fa-solid fa-credit-card" style="color: #e67e22;"></i> Thẻ Ngân Hàng (ATM / Visa / Master)
+                </label>
+                <!-- Khu vực nhập thông tin thẻ -->
+                <div class="payment-details" id="card-box">
+                    <input type="text" placeholder="Số thẻ (16 chữ số)" style="width:100%; padding:6px; margin-bottom:6px; border:1px solid #ddd; border-radius:4px;">
+                    <div style="display: flex; gap: 6px;">
+                        <input type="text" placeholder="MM/YY" style="width:50%; padding:6px; border:1px solid #ddd; border-radius:4px;">
+                        <input type="password" placeholder="CVV" style="width:50%; padding:6px; border:1px solid #ddd; border-radius:4px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <button class="btn-primary" onclick="submitOrder()">Đặt Hàng Ngay</button>
     </div>
 
@@ -31,16 +106,24 @@
     </div>
 
     <script>
+        // Hiển thị/Ẩn thông tin tương ứng với hình thức thanh toán được chọn
+        function togglePayment(type) {
+            document.getElementById('qr-box').style.display = (type === 'qr') ? 'block' : 'none';
+            document.getElementById('card-box').style.display = (type === 'card') ? 'block' : 'none';
+        }
+
         function submitOrder() {
             let name = document.getElementById('fullname').value;
-            if(!name) {
-                alert("Vui lòng nhập thông tin nhận hàng!");
+            let phone = document.getElementById('phone').value;
+            if(!name || !phone) {
+                alert("Vui lòng điền đầy đủ họ tên và số điện thoại nhận hàng!");
                 return;
             }
-            alert("Đặt hàng thành công! Cảm ơn bạn đã mua sắm.");
+            alert("Đặt hàng thành công! Đơn hàng của bạn đang được xử lý.");
             localStorage.removeItem('cart');
             window.location.href = "index.html";
         }
+
         document.getElementById('cart-count').innerText = (JSON.parse(localStorage.getItem('cart')) || []).length;
     </script>
 </body>

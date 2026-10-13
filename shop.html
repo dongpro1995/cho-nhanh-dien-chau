@@ -176,4 +176,114 @@
         // Bắt buộc đăng nhập
         if (!currentUser) {
             alert("Bạn cần đăng ký hoặc đăng nhập tài khoản shop trước khi truy cập gian hàng!");
-            window
+            window.location.href = "account.html";
+        } else {
+            document.getElementById('shop-title-name').innerText = "Gian hàng của: " + currentUser;
+        }
+
+        function initPage() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartBadge = document.getElementById('cart-count');
+            if(cartBadge) cartBadge.innerText = cart.length;
+
+            loadShopProducts();
+        }
+
+        function openPostModal() {
+            document.getElementById('post-modal').style.display = 'flex';
+        }
+        
+        function closePostModal() {
+            document.getElementById('post-modal').style.display = 'none';
+        }
+
+        // Đọc ảnh từ thiết bị
+        function previewImage(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    base64ImageString = e.target.result;
+                    let preview = document.getElementById('img-preview');
+                    preview.src = base64ImageString;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Lưu sản phẩm có đầy đủ thông tin chi tiết
+        function saveNewProduct() {
+            let name = document.getElementById('p-name').value.trim();
+            let price = document.getElementById('p-price').value.trim();
+            let category = document.getElementById('p-category').value;
+            let size = document.getElementById('p-size').value.trim();
+            let desc = document.getElementById('p-desc').value.trim();
+
+            if (!name || !price || !base64ImageString) {
+                alert("Vui lòng điền Tên sản phẩm, Giá bán và chọn Hình ảnh!");
+                return;
+            }
+
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            
+            products.unshift({
+                name: name,
+                price: parseInt(price),
+                category: category,
+                size: size || "Tiêu chuẩn",
+                desc: desc || "Chưa có mô tả chi tiết.",
+                img: base64ImageString,
+                shop: currentUser
+            });
+
+            localStorage.setItem('products', JSON.stringify(products));
+
+            alert("Đăng sản phẩm thành công!");
+            
+            // Xóa form
+            document.getElementById('p-name').value = "";
+            document.getElementById('p-price').value = "";
+            document.getElementById('p-size').value = "";
+            document.getElementById('p-desc').value = "";
+            document.getElementById('p-file').value = "";
+            document.getElementById('img-preview').style.display = 'none';
+            base64ImageString = "";
+
+            closePostModal();
+            loadShopProducts();
+        }
+
+        // Hiển thị sản phẩm trong gian hàng kèm thông tin kích thước và mô tả
+        function loadShopProducts() {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            let container = document.getElementById('shop-product-list');
+            
+            let myProducts = products.filter(p => p.shop === currentUser);
+
+            if (myProducts.length === 0) {
+                container.innerHTML = "<p style='grid-column: span 2; text-align:center; color:#888; padding:20px;'>Gian hàng của bạn chưa có sản phẩm nào.</p>";
+                return;
+            }
+
+            let html = "";
+            myProducts.forEach(p => {
+                html += `
+                    <div class="product-card" style="background:white; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.1); display:flex; flex-direction:column;">
+                        <img src="${p.img}" style="width:100%; height:120px; object-fit:cover;" alt="product">
+                        <div style="padding:8px; display:flex; flex-direction:column; flex:1;">
+                            <div style="font-size:12px; height:32px; overflow:hidden; margin-bottom:4px; font-weight:500;">${p.name}</div>
+                            <div style="color:#ee4d2d; font-weight:bold; font-size:13px; margin-bottom:2px;">${Number(p.price).toLocaleString()} đ</div>
+                            <div style="font-size:11px; color:#555;">🏷️ Loại: ${p.category || 'Khác'}</div>
+                            <div style="font-size:11px; color:#555;">📏 Size: ${p.size || 'Tiêu chuẩn'}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        window.onload = initPage;
+    </script>
+</body>
+</html>

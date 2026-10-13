@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán Đơn Hàng</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-title"><i class="fa-solid fa-box-archive"></i> Xác Nhận Thanh Toán</div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h3>Thông tin nhận hàng</h3>
+            <input type="text" id="fullname" placeholder="Họ và tên người nhận" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
+            <input type="text" id="phone" placeholder="Số điện thoại" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
+            <textarea id="address" placeholder="Địa chỉ nhận hàng chi tiết" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;"></textarea>
+        </div>
+        <button class="btn-primary" onclick="submitOrder()">Đặt Hàng Ngay</button>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+        <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
+        <a href="checkout.html" class="nav-item active"><i class="fa-solid fa-box-archive"></i><span>Thanh Toán</span></a>
+        <a href="account.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Tôi</span></a>
+    </div>
+
+    <script>
+        function submitOrder() {
+            let name = document.getElementById('fullname').value;
+            if(!name) {
+                alert("Vui lòng nhập thông tin nhận hàng!");
+                return;
+            }
+            alert("Đặt hàng thành công! Cảm ơn bạn đã mua sắm.");
+            localStorage.removeItem('cart');
+            window.location.href = "index.html";
+        }
+        document.getElementById('cart-count').innerText = (JSON.parse(localStorage.getItem('cart')) || []).length;
+    </script>
+</body>
+</html>

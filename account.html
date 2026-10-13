@@ -3,97 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tài Khoản - Chợ Nhanh Diễn Châu</title>
+    <title>Tài Khoản Cộng Đồng - Chợ Nhanh Diễn Châu</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Nhúng thư viện Firebase v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
-        .auth-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-        }
-        .form-group {
-            margin-bottom: 12px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 4px;
-            font-weight: bold;
-        }
-        .form-control {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            outline: none;
-            box-sizing: border-box;
-        }
-        .action-links {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 13px;
-        }
-        .link-btn {
-            color: #2980b9;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .link-btn.forgot {
-            color: #e67e22;
-        }
-        .profile-header {
-            text-align: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 15px;
-        }
-        .profile-avatar {
-            width: 70px;
-            height: 70px;
-            background: #ee4d2d;
-            color: white;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            margin:  0 auto 10px auto;
-            font-weight: bold;
-        }
-        .info-box {
-            background: #f8f9fa;
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 12px;
-            text-align: left;
-            border: 1px solid #eee;
-        }
-        .info-box div {
-            margin-bottom: 6px;
-        }
-        .info-box div:last-child {
-            margin-bottom: 0;
-        }
+        .auth-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; font-weight: bold; }
+        .form-control { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; box-sizing: border-box; }
+        .action-links { display: flex; justify-content: space-between; margin-top: 15px; font-size: 13px; }
+        .link-btn { color: #2980b9; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="header-title"><i class="fa-solid fa-user"></i> Tài Khoản Cá Nhân</div>
+        <div class="header-title"><i class="fa-solid fa-user"></i> Tài Khoản Cộng Đồng</div>
     </div>
 
     <div class="container" style="padding: 15px;">
         
-        <!-- 1. KHUNG ĐĂNG NHẬP -->
+        <!-- FORM ĐĂNG NHẬP -->
         <div class="auth-card" id="login-section">
-            <h3 style="color: #ee4d2d; margin-bottom: 12px;">Đăng Nhập Tài Khoản</h3>
+            <h3 style="color: #ee4d2d; margin-bottom: 12px;">Đăng Nhập Toàn Hệ Thống</h3>
             <div class="form-group">
                 <label>Tên đăng nhập</label>
                 <input type="text" id="login-user" class="form-control" placeholder="Nhập tên tài khoản...">
@@ -104,105 +41,56 @@
             </div>
             <button class="btn-primary" onclick="handleLogin()" style="width:100%; padding:10px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Đăng Nhập</button>
             
-            <div class="action-links">
-                <span class="link-btn" onclick="showSection('register-section')">👉 Đăng ký tài khoản mới</span>
-                <span class="link-btn forgot" onclick="showSection('forgot-section')">Quên mật khẩu?</span>
+            <div class="action-links" style="justify-content:center;">
+                <span class="link-btn" onclick="showSection('register-section')">👉 Đăng ký tài khoản shop mới</span>
             </div>
         </div>
 
-        <!-- 2. KHUNG ĐĂNG KÝ (CÓ THÊM NICKNAME, HỌ TÊN VÀ ĐỊA CHỈ) -->
+        <!-- FORM ĐĂNG KÝ CỘNG ĐỒNG -->
         <div class="auth-card" id="register-section" style="display: none;">
             <h3 style="color: #ee4d2d; margin-bottom: 12px;">Đăng Ký Tài Khoản Mới</h3>
             <div class="form-group">
                 <label>Tên đăng nhập (Username) *</label>
-                <input type="text" id="reg-user" class="form-control" placeholder="Dùng để đăng nhập hệ thống...">
+                <input type="text" id="reg-user" class="form-control" placeholder="Dùng để đăng nhập mọi thiết bị...">
             </div>
             <div class="form-group">
-                <label>Biệt hiệu / Nickname hiển thị *</label>
-                <input type="text" id="reg-nickname" class="form-control" placeholder="Ví dụ: Cường Diễn Châu, Shop Mẹ Bắp...">
+                <label>Biệt hiệu / Nickname *</label>
+                <input type="text" id="reg-nickname" class="form-control" placeholder="Ví dụ: Shop Cường Diễn Châu...">
             </div>
             <div class="form-group">
-                <label>Họ và tên thật *</label>
-                <input type="text" id="reg-fullname" class="form-control" placeholder="Nhập họ và tên đầy đủ...">
+                <label>Họ tên thật *</label>
+                <input type="text" id="reg-fullname" class="form-control" placeholder="Nhập họ tên...">
             </div>
             <div class="form-group">
-                <label>Địa chỉ nhận hàng / Địa chỉ Shop *</label>
-                <input type="text" id="reg-address" class="form-control" placeholder="Ví dụ: Khối 4, Thị trấn Diễn Châu...">
-            </div>
-            <div class="form-group">
-                <label>Số điện thoại hoặc Email *</label>
-                <input type="text" id="reg-contact" class="form-control" placeholder="Dùng để khôi phục mật khẩu...">
+                <label>Địa chỉ Shop *</label>
+                <input type="text" id="reg-address" class="form-control" placeholder="Nhập địa chỉ...">
             </div>
             <div class="form-group">
                 <label>Mật khẩu *</label>
-                <input type="password" id="reg-pass" class="form-control" placeholder="Tạo mật khẩu bảo mật...">
+                <input type="password" id="reg-pass" class="form-control" placeholder="Tạo mật khẩu...">
             </div>
-            <button class="btn-primary" onclick="handleRegister()" style="width:100%; padding:10px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Đăng Ký Ngay</button>
+            <button class="btn-primary" onclick="handleRegister()" style="width:100%; padding:10px; background:#ee4d2d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Đăng Ký Lưu Lên Mạng</button>
             
             <div class="action-links" style="justify-content: center;">
                 <span class="link-btn" onclick="showSection('login-section')">⬅ Quay lại Đăng Nhập</span>
             </div>
         </div>
 
-        <!-- 3. KHUNG QUÊN MẬT KHẨU -->
-        <div class="auth-card" id="forgot-section" style="display: none;">
-            <h3 style="color: #e67e22; margin-bottom: 5px;">Khôi Phục Mật Khẩu</h3>
-            <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Nhập số điện thoại hoặc email đã đăng ký.</p>
-            
-            <div id="step-send-otp">
-                <div class="form-group">
-                    <label>Số điện thoại hoặc Email</label>
-                    <input type="text" id="forgot-contact" class="form-control" placeholder="Nhập SĐT hoặc Email...">
-                </div>
-                <button class="btn-primary" style="width:100%; padding:10px; background:#e67e22; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="sendOtpCode()">Gửi Mã OTP</button>
-            </div>
-
-            <div id="step-verify-otp" style="display: none;">
-                <div class="form-group">
-                    <label>Mã xác thực (Mã giả lập: <b style="color: red;">1234</b>)</label>
-                    <input type="text" id="otp-input" class="form-control" placeholder="Nhập 4 chữ số OTP...">
-                </div>
-                <div class="form-group">
-                    <label>Mật khẩu mới</label>
-                    <input type="password" id="new-pass" class="form-control" placeholder="Nhập mật khẩu mới...">
-                </div>
-                <button class="btn-primary" style="width:100%; padding:10px; background:#e67e22; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="verifyAndResetPass()">Xác Nhận Đổi Mật Khẩu</button>
-            </div>
-
-            <div class="action-links" style="justify-content: center; margin-top: 15px;">
-                <span class="link-btn" onclick="showSection('login-section')">⬅ Quay lại Đăng Nhập</span>
-            </div>
-        </div>
-
-        <!-- 4. TRANG CÁ NHÂN HIỂN THỊ ĐỦ THÔNG TIN -->
-        <div class="auth-card" id="profile-section" style="display: none;">
-            <div class="profile-header">
-                <div class="profile-avatar" id="avatar-text">U</div>
-                <h3 id="profile-nickname" style="color: #ee4d2d; margin-bottom: 2px;">Nickname</h3>
-                <p style="font-size: 12px; color: #666;" id="profile-username">Username: @username</p>
-            </div>
-
-            <div class="info-box">
-                <div><i class="fa-solid fa-user-tag" style="color:#ee4d2d; width:20px;"></i> <b>Họ và tên:</b> <span id="profile-fullname">---</span></div>
-                <div><i class="fa-solid fa-location-dot" style="color:#ee4d2d; width:20px;"></i> <b>Địa chỉ:</b> <span id="profile-address">---</span></div>
-                <div><i class="fa-solid fa-phone" style="color:#ee4d2d; width:20px;"></i> <b>Liên hệ:</b> <span id="profile-contact">---</span></div>
-            </div>
-
-            <div style="margin-bottom: 15px;">
-                <a href="shop.html" style="display: block; background: #fff5f2; color: #ee4d2d; border: 1px solid #ee4d2d; padding: 10px; text-align: center; border-radius: 6px; font-weight: bold; text-decoration: none; margin-bottom: 8px;">
-                    <i class="fa-solid fa-store"></i> Quản Lý Gian Hàng Của Tôi
-                </a>
-                <a href="cart.html" style="display: block; background: #f8f9fa; color: #333; border: 1px solid #ddd; padding: 10px; text-align: center; border-radius: 6px; font-weight: bold; text-decoration: none;">
-                    <i class="fa-solid fa-cart-shopping"></i> Xem Giỏ Hàng
+        <!-- TRANG CÁ NHÂN -->
+        <div class="auth-card" id="profile-section" style="display: none; text-align:center;">
+            <h3 id="profile-nickname" style="color: #ee4d2d; margin-bottom: 5px;">Nickname</h3>
+            <p style="font-size: 13px; color: #666;" id="profile-username">@username</p>
+            <div style="margin: 15px 0;">
+                <a href="shop.html" style="display: block; background: #fff5f2; color: #ee4d2d; border: 1px solid #ee4d2d; padding: 10px; border-radius: 6px; font-weight: bold; text-decoration: none; margin-bottom: 8px;">
+                    <i class="fa-solid fa-store"></i> Đến Gian Hàng Của Tôi
                 </a>
             </div>
-
             <button class="btn-primary" style="width:100%; padding:10px; background:#7f8c8d; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="handleLogout()">Đăng Xuất Tài Khoản</button>
         </div>
 
     </div>
 
-    <!-- Thanh điều hướng dưới cùng -->
+    <!-- Thanh điều hướng -->
     <div class="bottom-nav">
         <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
         <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
@@ -212,131 +100,105 @@
     </div>
 
     <script>
-        let resetTargetUser = null;
+        // Cấu hình Firebase tích hợp Database URL của bạn
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV386aZviFh1EZkDyZfnbfBuAwTAa_HqI",
+            authDomain: "chonhanhdienchau.firebaseapp.com",
+            databaseURL: "https://chonhanhdienchau-default-rtdb.firebaseio.com",
+            projectId: "chonhanhdienchau",
+            storageBucket: "chonhanhdienchau.firebasestorage.app",
+            messagingSenderId: "353569965602",
+            appId: "1:353569965602:web:df2b668b15a837c07cac7b",
+            measurementId: "G-4FQ4BWWJ9Q"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        function showSection(sectionId) {
+        function showSection(id) {
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('register-section').style.display = 'none';
-            document.getElementById('forgot-section').style.display = 'none';
             document.getElementById('profile-section').style.display = 'none';
-            
-            document.getElementById('step-send-otp').style.display = 'block';
-            document.getElementById('step-verify-otp').style.display = 'none';
-
-            document.getElementById(sectionId).style.display = 'block';
+            document.getElementById(id).style.display = 'block';
         }
 
         function checkLoginState() {
             let currentUser = localStorage.getItem('currentUser');
             if (currentUser) {
                 document.getElementById('profile-section').style.display = 'block';
-                
-                // Lấy thông tin chi tiết từ localStorage
-                let userData = JSON.parse(localStorage.getItem('user_info_' + currentUser)) || {};
-                
+                let userData = JSON.parse(localStorage.getItem('user_info')) || {};
                 document.getElementById('profile-nickname').innerText = userData.nickname || currentUser;
                 document.getElementById('profile-username').innerText = "Tài khoản: " + currentUser;
-                document.getElementById('profile-fullname').innerText = userData.fullname || "Chưa cập nhật";
-                document.getElementById('profile-address').innerText = userData.address || "Chưa cập nhật";
-                document.getElementById('profile-contact').innerText = userData.contact || "Chưa cập nhật";
-                document.getElementById('avatar-text').innerText = (userData.nickname || currentUser).charAt(0).toUpperCase();
             } else {
                 showSection('login-section');
             }
         }
 
         function handleRegister() {
-            let user = document.getElementById('reg-user').value.trim();
+            let user = document.getElementById('reg-user').value.trim().toLowerCase();
             let nickname = document.getElementById('reg-nickname').value.trim();
             let fullname = document.getElementById('reg-fullname').value.trim();
             let address = document.getElementById('reg-address').value.trim();
-            let contact = document.getElementById('reg-contact').value.trim();
             let pass = document.getElementById('reg-pass').value.trim();
 
-            if (!user || !nickname || !fullname || !address || !contact || !pass) {
-                alert("Vui lòng điền đầy đủ tất cả các trường thông tin!");
+            if (!user || !nickname || !pass) {
+                alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
                 return;
             }
 
-            if (localStorage.getItem('acc_' + user)) {
-                alert("Tên tài khoản này đã tồn tại, vui lòng chọn tên khác!");
-                return;
-            }
-
-            // Lưu mật khẩu và thông tin chi tiết
-            localStorage.setItem('acc_' + user, pass);
-            localStorage.setItem('contact_' + contact, user);
-            localStorage.setItem('user_info_' + user, JSON.stringify({
-                nickname: nickname,
-                fullname: fullname,
-                address: address,
-                contact: contact
-            }));
-
-            alert("Đăng ký tài khoản thành công! Hãy tiến hành đăng nhập.");
-            showSection('login-section');
+            db.ref('users/' + user).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    alert("Tên tài khoản này đã có người đăng ký trên hệ thống!");
+                } else {
+                    db.ref('users/' + user).set({
+                        pass: pass,
+                        nickname: nickname,
+                        fullname: fullname,
+                        address: address
+                    }, (error) => {
+                        if (!error) {
+                            alert("Đăng ký thành công trực tuyến! Giờ bạn có thể đăng nhập trên MỌI MÁY.");
+                            showSection('login-section');
+                        } else {
+                            alert("Lỗi kết nối mạng: " + error.message);
+                        }
+                    });
+                }
+            });
         }
 
         function handleLogin() {
-            let user = document.getElementById('login-user').value.trim();
+            let user = document.getElementById('login-user').value.trim().toLowerCase();
             let pass = document.getElementById('login-pass').value.trim();
-            let savedPass = localStorage.getItem('acc_' + user);
 
-            if (savedPass && savedPass === pass) {
-                localStorage.setItem('currentUser', user);
-                alert("Đăng nhập thành công!");
-                checkLoginState();
-            } else {
-                alert("Sai tên đăng nhập hoặc mật khẩu!");
-            }
-        }
-
-        function sendOtpCode() {
-            let contact = document.getElementById('forgot-contact').value.trim();
-            if (!contact) {
-                alert("Vui lòng nhập SĐT hoặc Email!");
+            if (!user || !pass) {
+                alert("Vui lòng nhập tên tài khoản và mật khẩu!");
                 return;
             }
 
-            let foundUser = localStorage.getItem('contact_' + contact);
-            if (!foundUser) {
-                alert("Không tìm thấy tài khoản gắn với thông tin này!");
-                return;
-            }
-
-            resetTargetUser = foundUser;
-            alert("Mã OTP giả lập của bạn là: 1234");
-
-            document.getElementById('step-send-otp').style.display = 'none';
-            document.getElementById('step-verify-otp').style.display = 'block';
-        }
-
-        function verifyAndResetPass() {
-            let otp = document.getElementById('otp-input').value.trim();
-            let newPass = document.getElementById('new-pass').value.trim();
-
-            if (otp !== "1234") {
-                alert("Mã OTP không chính xác!");
-                return;
-            }
-
-            if (!newPass) {
-                alert("Vui lòng nhập mật khẩu mới!");
-                return;
-            }
-
-            localStorage.setItem('acc_' + resetTargetUser, newPass);
-            alert("Đổi mật khẩu thành công! Hãy đăng nhập lại.");
-            showSection('login-section');
+            db.ref('users/' + user).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    if (data.pass === pass) {
+                        localStorage.setItem('currentUser', user);
+                        localStorage.setItem('user_info', JSON.stringify(data));
+                        alert("Đăng nhập thành công!");
+                        checkLoginState();
+                    } else {
+                        alert("Sai mật khẩu!");
+                    }
+                } else {
+                    alert("Tài khoản này chưa tồn tại trên hệ thống mạng!");
+                }
+            });
         }
 
         function handleLogout() {
             localStorage.removeItem('currentUser');
-            alert("Đã đăng xuất tài khoản!");
+            localStorage.removeItem('user_info');
+            alert("Đã đăng xuất!");
             checkLoginState();
         }
 
-        document.getElementById('cart-count').innerText = (JSON.parse(localStorage.getItem('cart')) || []).length;
         checkLoginState();
     </script>
 </body>

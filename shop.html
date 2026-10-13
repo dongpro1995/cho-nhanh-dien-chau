@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gian Hàng Của Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-title"><i class="fa-solid fa-store"></i> Quản Lý Gian Hàng</div>
+    </div>
+
+    <div class="container">
+        <!-- Thông tin gian hàng -->
+        <div class="shop-banner">
+            <h2 id="shop-title-name">Tên Gian Hàng</h2>
+            <p style="font-size: 13px;">Chuyên cung cấp sản phẩm chất lượng tại Diễn Châu</p>
+        </div>
+
+        <!-- Nút Đăng Sản Phẩm Mới cho Shop -->
+        <div style="margin-bottom: 15px;">
+            <button class="btn-primary" onclick="openPostModal()"><i class="fa-solid fa-plus"></i> Đăng Sản Phẩm Mới Vào Gian Hàng</button>
+        </div>
+
+        <h3>Sản phẩm của Shop</h3>
+        <!-- Danh sách sản phẩm của riêng shop -->
+        <div class="product-grid" id="shop-product-list" style="margin-top: 10px;">
+            <!-- Sản phẩm sẽ được load tự động bằng JavaScript -->
+        </div>
+    </div>
+
+    <!-- Modal Đăng Sản Phẩm -->
+    <div class="modal" id="post-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center; padding:20px;">
+        <div class="modal-content" style="background:white; width:100%; max-width:400px; border-radius:8px; padding:20px; position:relative;">
+            <span class="close-btn" onclick="closePostModal()" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
+            <h3 style="color:#ee4d2d; margin-bottom:15px; text-align:center;">Thêm Sản Phẩm Mới</h3>
+            
+            <div style="margin-bottom:10px;">
+                <label style="font-size:12px; color:#666;">Tên sản phẩm</label>
+                <input type="text" id="p-name" placeholder="Nhập tên sản phẩm..." style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; margin-top:4px;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label style="font-size:12px; color:#666;">Giá bán (VNĐ)</label>
+                <input type="number" id="p-price" placeholder="Nhập giá..." style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; margin-top:4px;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label style="font-size:12px; color:#666;">Link hình ảnh sản phẩm</label>
+                <input type="text" id="p-img" placeholder="Dán link ảnh (URL)..." style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; margin-top:4px;">
+            </div>
+            <button class="btn-primary" onclick="saveProduct()">Đăng Bài</button>
+        </div>
+    </div>
+
+    <!-- Thanh điều hướng dưới -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+        <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
+        <a href="checkout.html" class="nav-item"><i class="fa-solid fa-box-archive"></i><span>Thanh Toán</span></a>
+        <a href="shop.html" class="nav-item active"><i class="fa-solid fa-store"></i><span>Gian Hàng</span></a>
+        <a href="account.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Tôi</span></a>
+    </div>
+
+    <script>
+        // Kiểm tra xem đã đăng nhập chưa, nếu chưa bắt đăng nhập
+        let currentUser = localStorage.getItem('currentUser') || "Shop Mặc Định";
+        document.getElementById('shop-title-name').innerText = "Gian hàng: " + currentUser;
+
+        function openPostModal() {
+            document.getElementById('post-modal').style.display = 'flex';
+        }
+        function closePostModal() {
+            document.getElementById('post-modal').style.display = 'none';
+        }
+
+        // Lưu sản phẩm của shop vào LocalStorage chung để trang chủ cũng hiển thị được
+        function saveProduct() {
+            let name = document.getElementById('p-name').value;
+            let price = document.getElementById('p-price').value;
+            let img = document.getElementById('p-img').value || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300";
+
+            if(!name || !price) {
+                alert("Vui lòng nhập tên và giá sản phẩm!");
+                return;
+            }
+
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            products.push({ name, price: parseInt(price), img, shop: currentUser });
+            localStorage.setItem('products', JSON.stringify(products));
+
+            alert("Đăng sản phẩm thành công!");
+            closePostModal();
+            loadShopProducts();
+        }
+
+        function loadShopProducts() {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            let container = document.getElementById('shop-product-list');
+            
+            // Lọc sản phẩm của đúng shop hiện tại
+            let myProducts = products.filter(p => p.shop === currentUser);
+
+            if(myProducts.length === 0) {
+                container.innerHTML = "<p style='grid-column: span 2; text-align:center; color:#888;'>Gian hàng chưa có sản phẩm nào.</p>";
+                return;
+            }
+
+            let html = "";
+            myProducts.forEach(p => {
+                html += `
+                    <div class="card" style="padding:0; overflow:hidden; margin-bottom:0;">
+                        <img src="${p.img}" style="width:100%; height:130px; object-fit:cover;" alt="img">
+                        <div style="padding:8px;">
+                            <h4 style="font-size:13px; height:32px; overflow:hidden;">${p.name}</h4>
+                            <p style="color:#ee4d2d; font-weight:bold; font-size:14px; margin-top:4px;">${p.price.toLocaleString()} đ</p>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        document.getElementById('cart-count').innerText = (JSON.parse(localStorage.getItem('cart')) || []).length;
+        loadShopProducts();
+    </script>
+</body>
+</html>

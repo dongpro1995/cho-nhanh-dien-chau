@@ -3,69 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tài Khoản</title>
+    <title>Tài Khoản - Chợ Nhanh Diễn Châu</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .auth-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+        .action-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+        .link-btn {
+            color: #2980b9;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .link-btn.forgot {
+            color: #e67e22;
+        }
+    </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="header-title"><i class="fa-solid fa-user"></i> Tài Khoản Người Dùng</div>
+        <div class="header-title"><i class="fa-solid fa-user"></i> Quản Lý Tài Khoản</div>
     </div>
 
-    <div class="container" id="auth-container">
-        <!-- Form Đăng Nhập -->
-        <div class="card" id="login-box">
-            <h3>Đăng Nhập</h3>
-            <input type="text" id="username" placeholder="Tên đăng nhập" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
-            <input type="password" id="password" placeholder="Mật khẩu" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
-            <button class="btn-primary" style="margin-top:10px;" onclick="login()">Đăng Nhập</button>
+    <div class="container">
+        
+        <!-- 1. KHUNG ĐĂNG NHẬP -->
+        <div class="auth-card" id="login-section">
+            <h3 style="color: #ee4d2d; margin-bottom: 10px;">Đăng Nhập Tài Khoản</h3>
+            <div class="form-group">
+                <label>Tên đăng nhập</label>
+                <input type="text" id="login-user" class="form-control" placeholder="Nhập tên tài khoản...">
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="login-pass" class="form-control" placeholder="Nhập mật khẩu...">
+            </div>
+            <button class="btn-primary" onclick="handleLogin()">Đăng Nhập</button>
+            
+            <div class="action-links">
+                <span class="link-btn" onclick="showSection('register-section')">👉 Đăng ký tài khoản mới</span>
+                <span class="link-btn forgot" onclick="showSection('forgot-section')">Quên mật khẩu?</span>
+            </div>
         </div>
 
-        <!-- Thông tin khi đã đăng nhập -->
-        <div class="card" id="profile-box" style="display:none; text-align:center;">
-            <h3>Xin chào, <span id="user-display" style="color:#ee4d2d;"></span></h3>
-            <button class="btn-primary" style="background:#7f8c8d; margin-top:10px;" onclick="logout()">Đăng Xuất</button>
+        <!-- 2. KHUNG ĐĂNG KÝ -->
+        <div class="auth-card" id="register-section" style="display: none;">
+            <h3 style="color: #ee4d2d; margin-bottom: 10px;">Đăng Ký Tài Khoản Mới</h3>
+            <div class="form-group">
+                <label>Tên đăng nhập / Tên Shop</label>
+                <input type="text" id="reg-user" class="form-control" placeholder="Chọn tên tài khoản...">
+            </div>
+            <div class="form-group">
+                <label>Email hoặc Số điện thoại (dùng để khôi phục)</label>
+                <input type="text" id="reg-contact" class="form-control" placeholder="Nhập email hoặc SĐT...">
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="reg-pass" class="form-control" placeholder="Tạo mật khẩu bảo mật...">
+            </div>
+            <button class="btn-primary" onclick="handleRegister()">Đăng Ký Ngay</button>
+            
+            <div class="action-links" style="justify-content: center;">
+                <span class="link-btn" onclick="showSection('login-section')">⬅ Quay lại Đăng Nhập</span>
+            </div>
         </div>
+
+        <!-- 3. KHUNG QUÊN MẬT KHẨU (GỬI MÃ QUA SĐT / EMAIL) -->
+        <div class="auth-card" id="forgot-section" style="display: none;">
+            <h3 style="color: #e67e22; margin-bottom: 5px;">Khôi Phục Mật Khẩu</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Nhập Email hoặc Số điện thoại đã đăng ký để nhận mã xác thực.</p>
+            
+            <!-- Bước 1: Nhập SĐT/Email -->
+            <div id="step-send-otp">
+                <div class="form-group">
+                    <label>Email hoặc Số điện thoại</label>
+                    <input type="text" id="forgot-contact" class="form-control" placeholder="Nhập SĐT hoặc Email...">
+                </div>
+                <button class="btn-primary" style="background: #e67e22;" onclick="sendOtpCode()">Gửi Mã Xác Thực (OTP)</button>
+            </div>
+
+            <!-- Bước 2: Nhập mã OTP và đổi mật khẩu mới -->
+            <div id="step-verify-otp" style="display: none;">
+                <div class="form-group">
+                    <label>Mã xác thực (Mã giả lập: <b style="color: red;">1234</b>)</label>
+                    <input type="text" id="otp-input" class="form-control" placeholder="Nhập 4 chữ số OTP...">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu mới</label>
+                    <input type="password" id="new-pass" class="form-control" placeholder="Nhập mật khẩu mới...">
+                </div>
+                <button class="btn-primary" style="background: #e67e22;" onclick="verifyAndResetPass()">Xác Nhận Đổi Mật Khẩu</button>
+            </div>
+
+            <div class="action-links" style="justify-content: center; margin-top: 15px;">
+                <span class="link-btn" onclick="showSection('login-section')">⬅ Quay lại Đăng Nhập</span>
+            </div>
+        </div>
+
+        <!-- 4. KHU VỰC THÔNG TIN KHI ĐÃ ĐĂNG NHẬP -->
+        <div class="auth-card" id="profile-section" style="display: none; text-align: center;">
+            <h3 style="margin-bottom: 8px;">Xin chào, <span id="profile-name" style="color: #ee4d2d;"></span>!</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Bạn đã đăng nhập thành công vào hệ thống.</p>
+            <button class="btn-primary" style="background: #7f8c8d;" onclick="handleLogout()">Đăng Xuất Tài Khoản</button>
+        </div>
+
     </div>
 
+    <!-- Thanh điều hướng dưới cùng -->
     <div class="bottom-nav">
         <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
         <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
         <a href="checkout.html" class="nav-item"><i class="fa-solid fa-box-archive"></i><span>Thanh Toán</span></a>
+        <a href="shop.html" class="nav-item"><i class="fa-solid fa-store"></i><span>Gian Hàng</span></a>
         <a href="account.html" class="nav-item active"><i class="fa-solid fa-user"></i><span>Tôi</span></a>
     </div>
 
     <script>
-        function login() {
-            let user = document.getElementById('username').value;
-            if(!user) {
-                alert("Vui lòng nhập tên tài khoản!");
+        let resetTargetUser = null;
+
+        // Hàm chuyển đổi qua lại giữa các Form
+        function showSection(sectionId) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('register-section').style.display = 'none';
+            document.getElementById('forgot-section').style.display = 'none';
+            document.getElementById('profile-section').style.display = 'none';
+            
+            // Reset lại bước gửi OTP về mặc định
+            document.getElementById('step-send-otp').style.display = 'block';
+            document.getElementById('step-verify-otp').style.display = 'none';
+
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        // Kiểm tra trạng thái khi mở trang
+        function checkLoginState() {
+            let currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                document.getElementById('profile-section').style.display = 'block';
+                document.getElementById('profile-name').innerText = currentUser;
+            } else {
+                showSection('login-section');
+            }
+        }
+
+        // Xử lý Đăng Ký
+        function handleRegister() {
+            let user = document.getElementById('reg-user').value.trim();
+            let contact = document.getElementById('reg-contact').value.trim();
+            let pass = document.getElementById('reg-pass').value.trim();
+
+            if (!user || !contact || !pass) {
+                alert("Vui lòng điền đầy đủ thông tin đăng ký!");
                 return;
             }
-            localStorage.setItem('currentUser', user);
-            checkLogin();
+
+            if (localStorage.getItem('acc_' + user)) {
+                alert("Tên tài khoản này đã tồn tại, vui lòng chọn tên khác!");
+                return;
+            }
+
+            localStorage.setItem('acc_' + user, pass);
+            localStorage.setItem('contact_' + contact, user);
+
+            alert("Đăng ký tài khoản thành công! Hãy tiến hành đăng nhập.");
+            showSection('login-section');
         }
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            checkLogin();
-        }
+        // Xử lý Đăng Nhập
+        function handleLogin() {
+            let user = document.getElementById('login-user').value.trim();
+            let pass = document.getElementById('login-pass').value.trim();
 
-        function checkLogin() {
-            let currentUser = localStorage.getItem('currentUser');
-            if(currentUser) {
-                document.getElementById('login-box').style.display = 'none';
-                document.getElementById('profile-box').style.display = 'block';
-                document.getElementById('user-display').innerText = currentUser;
+            let savedPass = localStorage.getItem('acc_' + user);
+
+            if (savedPass && savedPass === pass) {
+                localStorage.setItem('currentUser', user);
+                alert("Đăng nhập thành công!");
+                checkLoginState();
             } else {
-                document.getElementById('login-box').style.display = 'block';
-                document.getElementById('profile-box').style.display = 'none';
+                alert("Sai tên đăng nhập hoặc mật khẩu!");
             }
         }
 
+        // Gửi mã OTP khôi phục
+        function sendOtpCode() {
+            let contact = document.getElementById('forgot-contact').value.trim();
+
+            if (!contact) {
+                alert("Vui lòng nhập Email hoặc Số điện thoại!");
+                return;
+            }
+
+            let foundUser = localStorage.getItem('contact_' + contact);
+            if (!foundUser) {
+                alert("Không tìm thấy tài khoản gắn với Email hoặc SĐT này!");
+                return;
+            }
+
+            resetTargetUser = foundUser;
+            alert("Mã xác thực đã được gửi! Mã OTP giả lập của bạn là: 1234");
+
+            document.getElementById('step-send-otp').style.display = 'none';
+            document.getElementById('step-verify-otp').style.display = 'block';
+        }
+
+        // Xác thực OTP & đổi mật khẩu mới
+        function verifyAndResetPass() {
+            let otp = document.getElementById('otp-input').value.trim();
+            let newPass = document.getElementById('new-pass').value.trim();
+
+            if (otp !== "1234") {
+                alert("Mã OTP không chính xác!");
+                return;
+            }
+
+            if (!newPass) {
+                alert("Vui lòng nhập mật khẩu mới!");
+                return;
+            }
+
+            localStorage.setItem('acc_' + resetTargetUser, newPass);
+            alert("Đổi mật khẩu thành công! Hãy đăng nhập lại bằng mật khẩu mới.");
+            showSection('login-section');
+        }
+
+        // Đăng xuất
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            alert("Đã đăng xuất tài khoản!");
+            checkLoginState();
+        }
+
+        // Cập nhật số lượng giỏ hàng và trạng thái đăng nhập khi mở trang
         document.getElementById('cart-count').innerText = (JSON.parse(localStorage.getItem('cart')) || []).length;
-        checkLogin();
+        checkLoginState();
     </script>
 </body>
 </html>

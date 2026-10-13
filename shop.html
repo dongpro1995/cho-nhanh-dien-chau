@@ -3,9 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gian Hàng Của Shop</title>
+    <title>Quản Lý Gian Hàng - Chợ Nhanh Diễn Châu</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .shop-banner {
+            background: linear-gradient(135deg, #ee4d2d, #ff7337);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .shop-banner h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+        #img-preview {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 8px;
+            display: none;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
 
@@ -16,45 +56,50 @@
     <div class="container">
         <!-- Thông tin gian hàng -->
         <div class="shop-banner">
-            <h2 id="shop-title-name">Tên Gian Hàng</h2>
-            <p style="font-size: 13px;">Chuyên cung cấp sản phẩm chất lượng tại Diễn Châu</p>
+            <h2 id="shop-title-name">Gian Hàng Của Bạn</h2>
+            <p style="font-size: 13px;">Chợ Nhanh Diễn Châu - Kết nối mua bán nhanh chóng</p>
         </div>
 
-        <!-- Nút Đăng Sản Phẩm Mới cho Shop -->
+        <!-- Nút mở form đăng sản phẩm -->
         <div style="margin-bottom: 15px;">
-            <button class="btn-primary" onclick="openPostModal()"><i class="fa-solid fa-plus"></i> Đăng Sản Phẩm Mới Vào Gian Hàng</button>
+            <button class="btn-primary" onclick="openPostModal()"><i class="fa-solid fa-plus"></i> Đăng Sản Phẩm Mới (Tải Ảnh Từ Máy)</button>
         </div>
 
-        <h3>Sản phẩm của Shop</h3>
-        <!-- Danh sách sản phẩm của riêng shop -->
-        <div class="product-grid" id="shop-product-list" style="margin-top: 10px;">
-            <!-- Sản phẩm sẽ được load tự động bằng JavaScript -->
+        <h3 style="font-size: 15px; margin-bottom: 10px;">Sản phẩm trong gian hàng của bạn</h3>
+        <!-- Danh sách sản phẩm của shop -->
+        <div class="product-grid" id="shop-product-list">
+            <!-- Sản phẩm được nạp tự động -->
         </div>
     </div>
 
-    <!-- Modal Đăng Sản Phẩm -->
+    <!-- MODAL ĐĂNG SẢN PHẨM & TẢI ẢNH TỪ THIẾT BỊ -->
     <div class="modal" id="post-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center; padding:20px;">
         <div class="modal-content" style="background:white; width:100%; max-width:400px; border-radius:8px; padding:20px; position:relative;">
-            <span class="close-btn" onclick="closePostModal()" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
-            <h3 style="color:#ee4d2d; margin-bottom:15px; text-align:center;">Thêm Sản Phẩm Mới</h3>
+            <span class="close-btn" onclick="closePostModal()" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer; color:#888;">&times;</span>
+            <h3 style="color:#ee4d2d; margin-bottom:15px; text-align:center;">Đăng Bán Sản Phẩm Mới</h3>
             
-            <div style="margin-bottom:10px;">
-                <label style="font-size:12px; color:#666;">Tên sản phẩm</label>
-                <input type="text" id="p-name" placeholder="Nhập tên sản phẩm..." style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; margin-top:4px;">
+            <div class="form-group">
+                <label>Tên sản phẩm</label>
+                <input type="text" id="p-name" class="form-control" placeholder="Nhập tên sản phẩm...">
             </div>
-            <div style="margin-bottom:10px;">
-                <label style="font-size:12px; color:#666;">Giá bán (VNĐ)</label>
-                <input type="number" id="p-price" placeholder="Nhập giá..." style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; margin-top:4px;">
+            
+            <div class="form-group">
+                <label>Giá bán (VNĐ)</label>
+                <input type="number" id="p-price" class="form-control" placeholder="Nhập giá tiền...">
             </div>
-            <div style="margin-bottom:10px;">
-                <label style="font-size:12px; color:#666;">Link hình ảnh sản phẩm</label>
-                <input type="text" id="p-img" placeholder="Dán link ảnh (URL)..." style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; margin-top:4px;">
+
+            <div class="form-group">
+                <label>Chọn ảnh sản phẩm từ điện thoại / máy tính</label>
+                <input type="file" id="p-file" class="form-control" accept="image/*" onchange="previewImage(event)">
+                <!-- Khung hiển thị xem trước ảnh vừa chọn -->
+                <img id="img-preview" src="#" alt="Ảnh xem trước">
             </div>
-            <button class="btn-primary" onclick="saveProduct()">Đăng Bài</button>
+
+            <button class="btn-primary" onclick="saveNewProduct()" style="margin-top: 10px;">Đăng Bài Lên Chợ</button>
         </div>
     </div>
 
-    <!-- Thanh điều hướng dưới -->
+    <!-- Thanh điều hướng dưới cùng -->
     <div class="bottom-nav">
         <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
         <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
@@ -64,30 +109,59 @@
     </div>
 
     <script>
-        // Kiểm tra xem đã đăng nhập chưa, nếu chưa bắt đăng nhập
-        let currentUser = localStorage.getItem('currentUser') || "Shop Mặc Định";
+        // Kiểm tra tài khoản đăng nhập hiện tại
+        let currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) {
+            alert("Bạn cần đăng nhập tài khoản trước khi quản lý gian hàng!");
+            window.location.href = "account.html";
+        }
         document.getElementById('shop-title-name').innerText = "Gian hàng: " + currentUser;
+
+        let base64ImageString = ""; // Biến lưu chuỗi ảnh sau khi chuyển đổi
 
         function openPostModal() {
             document.getElementById('post-modal').style.display = 'flex';
         }
+        
         function closePostModal() {
             document.getElementById('post-modal').style.display = 'none';
         }
 
-        // Lưu sản phẩm của shop vào LocalStorage chung để trang chủ cũng hiển thị được
-        function saveProduct() {
-            let name = document.getElementById('p-name').value;
-            let price = document.getElementById('p-price').value;
-            let img = document.getElementById('p-img').value || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300";
+        // Xử lý đọc file ảnh từ điện thoại và hiển thị xem trước
+        function previewImage(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    base64ImageString = e.target.result; // Lưu mã ảnh Base64
+                    let preview = document.getElementById('img-preview');
+                    preview.src = base64ImageString;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
 
-            if(!name || !price) {
-                alert("Vui lòng nhập tên và giá sản phẩm!");
+        // Lưu sản phẩm vào LocalStorage để cả trang Chủ (index.html) và Gian Hàng đều hiển thị được
+        function saveNewProduct() {
+            let name = document.getElementById('p-name').value.trim();
+            let price = document.getElementById('p-price').value.trim();
+
+            if (!name || !price || !base64ImageString) {
+                alert("Vui lòng điền đầy đủ tên, giá và chọn ảnh sản phẩm từ thiết bị!");
                 return;
             }
 
             let products = JSON.parse(localStorage.getItem('products')) || [];
-            products.push({ name, price: parseInt(price), img, shop: currentUser });
+            
+            // Thêm sản phẩm mới vào danh sách chung
+            products.unshift({
+                name: name,
+                price: parseInt(price),
+                img: base64ImageString,
+                shop: currentUser
+            });
+
             localStorage.setItem('products', JSON.stringify(products));
 
             alert("Đăng sản phẩm thành công!");
@@ -95,35 +169,24 @@
             loadShopProducts();
         }
 
+        // Tải danh sách sản phẩm của riêng shop này
         function loadShopProducts() {
             let products = JSON.parse(localStorage.getItem('products')) || [];
             let container = document.getElementById('shop-product-list');
             
-            // Lọc sản phẩm của đúng shop hiện tại
+            // Chỉ lọc các sản phẩm do chính tài khoản hiện tại đăng
             let myProducts = products.filter(p => p.shop === currentUser);
 
-            if(myProducts.length === 0) {
-                container.innerHTML = "<p style='grid-column: span 2; text-align:center; color:#888;'>Gian hàng chưa có sản phẩm nào.</p>";
+            if (myProducts.length === 0) {
+                container.innerHTML = "<p style='grid-column: span 2; text-align:center; color:#888;'>Gian hàng của bạn chưa có sản phẩm nào.</p>";
                 return;
             }
 
             let html = "";
             myProducts.forEach(p => {
                 html += `
-                    <div class="card" style="padding:0; overflow:hidden; margin-bottom:0;">
-                        <img src="${p.img}" style="width:100%; height:130px; object-fit:cover;" alt="img">
-                        <div style="padding:8px;">
-                            <h4 style="font-size:13px; height:32px; overflow:hidden;">${p.name}</h4>
-                            <p style="color:#ee4d2d; font-weight:bold; font-size:14px; margin-top:4px;">${p.price.toLocaleString()} đ</p>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        document.getElementById('cart-count').innerText = (JSON.parse(localStorage.getItem('cart')) || []).length;
-        loadShopProducts();
-    </script>
-</body>
-</html>
+                    <div class="product-card" style="background:white; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                        <img src="${p.img}" style="width:100%; height:130px; object-fit:cover;" alt="product">
+                        <div style="padding:10px;">
+                            <div style="font-size:13px; height:34px; overflow:hidden; margin-bottom:6px;">${p.name}</div>
+                            <div

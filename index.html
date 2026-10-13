@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chợ Nhanh Diễn Châu - Trang Chủ</title>
-    <!-- Liên kết đến file CSS chung của bạn -->
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome cho Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .banner-search {
@@ -128,7 +126,7 @@
         </div>
     </div>
 
-    <!-- Danh mục sản phẩm -->
+    <!-- Danh mục sản phẩm nhanh -->
     <div class="categories">
         <div class="cat-item">🔥 Tất cả</div>
         <div class="cat-item">📱 Điện tử</div>
@@ -141,12 +139,12 @@
         <h3 style="font-size: 15px;">⚡ Sản Phẩm Nổi Bật</h3>
     </div>
 
-    <!-- Lưới hiển thị sản phẩm -->
+    <!-- Lưới hiển thị danh sách sản phẩm -->
     <div class="product-grid" id="home-product-list">
-        <!-- Sản phẩm được nạp tự động bằng JavaScript -->
+        <!-- Sản phẩm sẽ được nạp tự động bằng JavaScript -->
     </div>
 
-    <!-- Thanh điều hướng cố định dưới cùng (Liên kết chính xác đến các file) -->
+    <!-- Thanh điều hướng cố định dưới cùng -->
     <div class="bottom-nav">
         <a href="index.html" class="nav-item active"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
         <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
@@ -156,7 +154,7 @@
     </div>
 
     <script>
-        // Danh sách sản phẩm mẫu mặc định
+        // Danh sách sản phẩm mẫu mặc định ban đầu
         const defaultProducts = [
             { name: "Áo thun nam cổ tròn cotton thoáng mát", price: 120000, img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300", shop: "Shop Thời Trang 37" },
             { name: "Giày sneaker thể thao nam nữ năng động", price: 350000, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300", shop: "Giày Dép Diễn Châu" },
@@ -164,7 +162,13 @@
             { name: "Bình giữ nhiệt inox 304 cao cấp 500ml", price: 85000, img: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=300", shop: "Gia Dụng Thông Minh" }
         ];
 
-        // Hiển thị danh sách sản phẩm ra màn hình
+        // Lấy tổng hợp tất cả sản phẩm (Sản phẩm shop tự đăng + Sản phẩm mẫu)
+        function getAllProducts() {
+            let customProducts = JSON.parse(localStorage.getItem('products')) || [];
+            return [...customProducts, ...defaultProducts];
+        }
+
+        // Hiển thị danh sách sản phẩm ra giao diện
         function loadHomeProducts(productsToDisplay) {
             let container = document.getElementById('home-product-list');
             if (productsToDisplay.length === 0) {
@@ -181,7 +185,7 @@
                             <div class="product-name">${p.name}</div>
                             <div class="product-price">${Number(p.price).toLocaleString()} đ</div>
                             <div class="shop-tag"><i class="fa-solid fa-store"></i> ${p.shop || "Chợ Nhanh"}</div>
-                            <button class="btn-add" onclick="addToCart('${p.name}', ${p.price})">Thêm vào giỏ</button>
+                            <button class="btn-add" onclick="addToCart('${p.name.replace(/'/g, "\\'")}', ${p.price})">Thêm vào giỏ</button>
                         </div>
                     </div>
                 `;
@@ -189,13 +193,7 @@
             container.innerHTML = html;
         }
 
-        // Lấy tổng hợp sản phẩm (Từ LocalStorage khi shop đăng + sản phẩm mẫu)
-        function getAllProducts() {
-            let customProducts = JSON.parse(localStorage.getItem('products')) || [];
-            return [...customProducts, ...defaultProducts];
-        }
-
-        // Thêm sản phẩm vào giỏ hàng lưu vào LocalStorage
+        // Thêm sản phẩm vào giỏ hàng và lưu vào LocalStorage
         function addToCart(name, price) {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             cart.push({ name, price, quantity: 1 });
@@ -204,7 +202,7 @@
             alert("Đã thêm sản phẩm vào giỏ hàng!");
         }
 
-        // Cập nhật số lượng trên icon giỏ hàng ở thanh menu dưới
+        // Cập nhật số lượng hiển thị trên icon giỏ hàng ở thanh menu dưới
         function updateCartBadge() {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             document.getElementById('cart-count').innerText = cart.length;
@@ -218,7 +216,7 @@
             loadHomeProducts(filtered);
         }
 
-        // Khởi chạy khi tải trang
+        // Khởi chạy khi mở trang
         updateCartBadge();
         loadHomeProducts(getAllProducts());
     </script>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài Khoản</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-title"><i class="fa-solid fa-user"></i> Tài Khoản Người Dùng</div>
+    </div>
+
+    <div class="container" id="auth-container">
+        <!-- Form Đăng Nhập -->
+        <div class="card" id="login-box">
+            <h3>Đăng Nhập</h3>
+            <input type="text" id="username" placeholder="Tên đăng nhập" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
+            <input type="password" id="password" placeholder="Mật khẩu" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
+            <button class="btn-primary" style="margin-top:10px;" onclick="login()">Đăng Nhập</button>
+        </div>
+
+        <!-- Thông tin khi đã đăng nhập -->
+        <div class="card" id="profile-box" style="display:none; text-align:center;">
+            <h3>Xin chào, <span id="user-display" style="color:#ee4d2d;"></span></h3>
+            <button class="btn-primary" style="background:#7f8c8d; margin-top:10px;" onclick="logout()">Đăng Xuất</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+        <a href="cart.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cart-count">0</span><span>Giỏ Hàng</span></a>
+        <a href="checkout.html" class="nav-item"><i class="fa-solid fa-box-archive"></i><span>Thanh Toán</span></a>
+        <a href="account.html" class="nav-item active"><i class="fa-solid fa-user"></i><span>Tôi</span></a>
+    </div>
+
+    <script>
+        function login() {
+            let user = document.getElementById('username').value;
+            if(!user) {
+                alert("Vui lòng nhập tên tài khoản!");
+                return;
+            }
+            localStorage.setItem('currentUser', user);
+            checkLogin();
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            checkLogin();
+        }
+
+        function checkLogin() {
+            let currentUser = localStorage.getItem('currentUser');
+            if(currentUser) {
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('profile-box').style.display = 'block';
+                document.getElementById('user-display').innerText = currentUser;
+            } else {
+                document.getElementById('login-box').style.display = 'block';
+                document.getElementById('profile-box').style.display = 'none';
+            }
+        }
+
+        document.getElementById('cart-count').innerText = (JSON.parse(localStorage.getItem('cart')) || []).length;
+        checkLogin();
+    </script>
+</body>
+</html>
